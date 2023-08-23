@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using LandingAPI.AD.Models.Contactos;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using LandingAPI.AD.Models.Header;
 //using LandingApi.AD.Models.Contactos;
 
 namespace LandingAPI.AD.Services.Contactos
@@ -28,6 +29,47 @@ namespace LandingAPI.AD.Services.Contactos
             return new SqlConnection(_connection);
         }
 
+        public async Task<List<M_Contactos>> GetContactos()
+        {
+            using (var conn = GetConn())
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = new SqlCommand("Contactos_ObtenerContactos", conn))
+                {
+                    try
+                    {
+                        var contacto = new List<M_Contactos>();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var Contactos = new M_Contactos
+                                {
+                                    IdContacto = reader.GetInt32(reader.GetOrdinal("IdContacto")),
+                                    Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                                    Telefono = reader.GetString(reader.GetOrdinal("Telefono")),
+                                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                                    Mensaje = reader.GetString(reader.GetOrdinal("Mensaje"))
+
+                                };
+
+                                contacto.Add(Contactos);
+                            }
+                        }
+
+                        return contacto;
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw new Exception("Se produjo un error al obtener los contactos " + ex.Message);
+                    }
+                }
+            }
+        }
         public async Task<M_Contactos> GetContactoById(int IdContacto)
         {
             using (var conn = GetConn())

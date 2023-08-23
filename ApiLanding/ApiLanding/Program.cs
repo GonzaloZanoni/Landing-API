@@ -10,6 +10,10 @@ using LandingApi.AD.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using LandingAPI.AD.Services.Contactos;
 using LandingAPI.AD.Services.Header;
+using LandingAPI.AD.Services.PortadaImagen;
+using LandingAPI.AD.Services.Testimonios;
+using LandingAPI.AD.Services.SeccionServicios;
+using LandingAPI.AD.Services.ServicioImagenes;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -20,6 +24,10 @@ var connection = new M_ConnectionToSql(config.GetConnectionString("Conn"));
 builder.Services.AddSingleton(connection);
 builder.Services.AddTransient<IContactoServices, ContactoService>();
 builder.Services.AddTransient<IHeaderServices, HeaderServices>();
+builder.Services.AddTransient<IPortadaImagenServices, PortadaImagenServices>();
+builder.Services.AddTransient<ITestimonioServices, TestimonioServices>();
+builder.Services.AddTransient<ISeccionServicioServices, SeccionServicioServices>();
+builder.Services.AddTransient<IServicioImagenServices, ServicioImagenServices>();
 builder.Services.AddControllers();
 
 

@@ -9,6 +9,7 @@ namespace LandingAPI.AD.Services.Contactos
 {
     public interface IContactoServices
     {
+        Task<List<M_Contactos>> GetContactos();
         Task<int> AgregarContacto(M_Contactos contactos);
         Task<M_Contactos> GetContactoById(int idContacto);
         Task<M_Contactos> GetContactosByName(string contactoName);

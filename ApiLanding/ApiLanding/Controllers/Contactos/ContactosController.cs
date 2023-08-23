@@ -16,6 +16,29 @@ namespace ApiLanding.Controllers.Contactos
         {
             _IContactoServices = IContactoServices;
         }
+
+        [HttpGet("GetContactos")]
+        public async Task<ActionResult> GetContactos()
+        {
+            try
+            {
+                var m_Contacto = await _IContactoServices.GetContactos();
+
+                if (m_Contacto != null)
+                {
+                    return Ok(m_Contacto);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Controller: Se produjo un error al obtener el contacto " + ex.Message);
+            }
+        }
+
         //[Authorize]
         [HttpPost, Route("Agregar-ModificarContacto")]
         public async Task<ActionResult> AgregarContacto([FromBody] M_Contactos contactos)
