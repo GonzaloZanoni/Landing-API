@@ -14,6 +14,11 @@ using LandingAPI.AD.Services.PortadaImagen;
 using LandingAPI.AD.Services.Testimonios;
 using LandingAPI.AD.Services.SeccionServicios;
 using LandingAPI.AD.Services.ServicioImagenes;
+using LandingAPI.AD.Services.Galeria;
+using LandingAPI.AD.Services.GaleriaImagenes;
+using LandingAPI.AD.Services.Footer;
+using LandingAPI.AD.Services.RedSocial;
+using LandingAPI.AD.Services.Empresas;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -28,9 +33,27 @@ builder.Services.AddTransient<IPortadaImagenServices, PortadaImagenServices>();
 builder.Services.AddTransient<ITestimonioServices, TestimonioServices>();
 builder.Services.AddTransient<ISeccionServicioServices, SeccionServicioServices>();
 builder.Services.AddTransient<IServicioImagenServices, ServicioImagenServices>();
+builder.Services.AddTransient<IGaleriaServices, GaleriaServices>();
+builder.Services.AddTransient<IGaleriaImagenServices, GaleriaImagenServices>();
+builder.Services.AddTransient<IFooterServices, FooterServices>();
+builder.Services.AddTransient<IRedSocialServices, RedSocialServices>();
+builder.Services.AddTransient<IEmpresaServices, EmpresaServices>();
 builder.Services.AddControllers();
 
+// Cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Policy", app =>
+    {
+        app.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
+
+
+//var app = builder.Build();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -44,7 +67,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -1,36 +1,35 @@
-﻿using LandingAPI.AD.Models.ServicioImagenes;
-using LandingAPI.AD.Models.Testimonios;
-using LandingAPI.AD.Services.Contactos;
-using LandingAPI.AD.Services.SeccionServicios;
+﻿using LandingAPI.AD.Models.GaleriaImagenes;
+using LandingAPI.AD.Models.ServicioImagenes;
+using LandingAPI.AD.Services.GaleriaImagenes;
 using LandingAPI.AD.Services.ServicioImagenes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiLanding.Controllers.ServicioImagenes
+namespace ApiLanding.Controllers.GaleriaImagen
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ServicioImagenesController : ControllerBase
+    public class GaleriaImagenController : ControllerBase
     {
-        private readonly IServicioImagenServices _iservicioImagenes;
+        private readonly IGaleriaImagenServices _igaleriaImagenes;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ServicioImagenesController(IServicioImagenServices iservicioImagenes, IWebHostEnvironment webHostEnvironment)
+        public GaleriaImagenController(IGaleriaImagenServices igaleriaImagenes, IWebHostEnvironment webHostEnvironment)
         {
-            _iservicioImagenes = iservicioImagenes;
+            _igaleriaImagenes = igaleriaImagenes;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpGet("GetServicioImagenes")]
-        public async Task<ActionResult> GetServicioImagenes()
+        [HttpGet("GetGaleriaImagenes")]
+        public async Task<ActionResult> GetGaleriaImagenes()
         {
             try
             {
-                var m_ServicioImagenes = await _iservicioImagenes.GetServicioImagenes();
+                var m_GaleriaImagenes = await _igaleriaImagenes.GetGaleriaImagenes();
 
-                if (m_ServicioImagenes != null)
+                if (m_GaleriaImagenes != null)
                 {
-                    return Ok(m_ServicioImagenes);
+                    return Ok(m_GaleriaImagenes);
                 }
                 else
                 {
@@ -39,26 +38,26 @@ namespace ApiLanding.Controllers.ServicioImagenes
             }
             catch (Exception ex)
             {
-                throw new Exception("Controller: Se produjo un error al obtener el contacto " + ex.Message);
+                throw new Exception("Controller: Se produjo un error al obtener la imagen en galeria " + ex.Message);
             }
         }
 
-        [HttpPost, Route("AgregaModifica/Servicio-Imagen")]
-        public async Task<ActionResult> AddModifyServicioImagen([FromForm] M_ServicioImagenes servicioImagenes)
+        [HttpPost, Route("AgregaModifica/Galeria-Imagen")]
+        public async Task<ActionResult> AddModifyGaleriaImagen([FromForm] M_GaleriaImagen galeriaImagenes)
         {
             try
             {
-                if (servicioImagenes != null)
+                if (galeriaImagenes != null)
                 {
-                    M_ServicioImagenes m_ServicioImagenes = new();
+                    M_GaleriaImagen m_GaleriaImagen = new();
 
-                    if (servicioImagenes.IdServicioImagen == 0)
+                    if (galeriaImagenes.IdGaleriaImagen == 0)
                     {
-                        m_ServicioImagenes = await _iservicioImagenes.GetServicioImagenByName(servicioImagenes.Descripcion);
+                        m_GaleriaImagen = await _igaleriaImagenes.GetGaleriaImagenByName(galeriaImagenes.Descripcion);
 
-                        if (m_ServicioImagenes == null)
+                        if (m_GaleriaImagen == null)
                         {
-                            var Imagen = await _iservicioImagenes.AgregarServicioImagen(servicioImagenes);
+                            var Imagen = await _igaleriaImagenes.AgregarGaleriaImagen(galeriaImagenes);
                             return Ok(Imagen);
                         }
                         else
@@ -69,16 +68,16 @@ namespace ApiLanding.Controllers.ServicioImagenes
                     }
                     else
                     {
-                        m_ServicioImagenes = await _iservicioImagenes.GetServicioImagenById(servicioImagenes.IdServicioImagen);
+                        m_GaleriaImagen = await _igaleriaImagenes.GetGaleriaImagenById(galeriaImagenes.IdGaleriaImagen);
 
-                        if (m_ServicioImagenes == null)
+                        if (m_GaleriaImagen == null)
                         {
                             ModelState.AddModelError("Advertencia Modificar", "No se encuentra la imagen a modificar");
                             return BadRequest(ModelState);
                         }
                         else
                         {
-                            var rowAffected = await _iservicioImagenes.ModificarServicioImagenes(servicioImagenes);
+                            var rowAffected = await _igaleriaImagenes.ModificarGaleriaImagen(galeriaImagenes);
 
                             if (rowAffected != 0)
                             {
@@ -102,21 +101,21 @@ namespace ApiLanding.Controllers.ServicioImagenes
             }
         }
 
-        [HttpDelete, Route("Elimina/Servicio-Imagen/{id}")]
-        public async Task<ActionResult> DeleteServicioImagen(int id)
+        [HttpDelete, Route("Elimina/Galeria-Imagen/{id}")]
+        public async Task<ActionResult> DeleteGaleriaImagen(int id)
         {
             try
             {
-                var servicioImagenes = await _iservicioImagenes.GetServicioImagenById(id);
+                var galeriaImagen = await _igaleriaImagenes.GetGaleriaImagenById(id);
 
-                if (servicioImagenes == null)
+                if (galeriaImagen == null)
                 {
                     ModelState.AddModelError("Advertencia Eliminar", "No se encuentra la imagen a eliminar");
                     return BadRequest(ModelState);
                 }
                 else
                 {
-                    var isDeleted = await _iservicioImagenes.EliminarServicioImagen(id);
+                    var isDeleted = await _igaleriaImagenes.EliminarGaleriaImagen(id);
 
                     if (isDeleted)
                     {
@@ -130,12 +129,12 @@ namespace ApiLanding.Controllers.ServicioImagenes
             }
             catch (Exception ex)
             {
-                throw new Exception("Controller: Se produjo un error al eliminar una imagen en Servicios " + ex.Message);
+                throw new Exception("Controller: Se produjo un error al eliminar una imagen " + ex.Message);
             }
         }
 
-        [HttpPost, Route("SaveImage-Servicio")]
-        public async Task<ActionResult> SaveServicioImage(IFormFile image)
+        [HttpPost, Route("SaveImage-Galeria")]
+        public async Task<ActionResult> SaveGaleriaImage(IFormFile image)
         {
             if (image == null || image.Length == 0)
             {
@@ -153,14 +152,17 @@ namespace ApiLanding.Controllers.ServicioImagenes
             }
 
             string fileNameNew = $"{Guid.NewGuid()}-{fileNameWithoutExtension}{Extension}";
-            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot", "Images", "Empresa", "Servicios", fileNameNew);
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot", "Images", "Empresa", "Galeria", fileNameNew);
 
             using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 await image.CopyToAsync(fileStream);
             }
 
-            return Ok($"Images/Empresa/Servicios{fileNameNew}");
+            return Ok($"Images/Empresa/Galeria{fileNameNew}");
         }
+
+
+
     }
 }

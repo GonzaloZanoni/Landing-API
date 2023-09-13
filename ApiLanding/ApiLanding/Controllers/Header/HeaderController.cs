@@ -68,7 +68,52 @@ namespace ApiLanding.Controllers.Header
             }
 
             return Ok($"Images/Empresa/Logo{fileNameNew}");
+
         }
+
+        [HttpGet, Route("GetHeaderImage-Logo/{imageName}")]
+        public IActionResult GetHeaderImage(string imageName)
+        {
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot", "Images", "Empresa", "Logo", imageName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            var imageStream = System.IO.File.OpenRead(filePath);
+            return File(imageStream, "image/jpeg"); // Cambia el tipo MIME según el tipo de imagen
+        }
+
+        //[HttpGet, Route("GetHeaderLogo")]
+        //public IActionResult GetHeaderLogo()
+        //{
+        //    var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot", "Images", "Empresa", "Logo");
+
+        //    if (!System.IO.File.Exists(filePath))
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var imageStream = System.IO.File.OpenRead(filePath);
+        //    return File(imageStream, "image/jpeg"); // Cambia el tipo MIME según el tipo de imagen
+        //}
+
+        [HttpGet, Route("GetHeaderLogoList")]
+        public IActionResult GetHeaderLogoList()
+        {
+            var folderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot", "Images", "Empresa", "Logo");
+
+            if (!Directory.Exists(folderPath))
+            {
+                return NotFound();
+            }
+
+            var imageFiles = Directory.GetFiles(folderPath, "*.*").Select(Path.GetFileName);
+
+            return Ok(imageFiles);
+        }
+
 
         [HttpPost, Route("AgregaModificaHeader")]
         public async Task<ActionResult> AgregarModificarHeader([FromForm] M_Header header)

@@ -14,5 +14,6 @@ namespace LandingAPI.AD.Services.ServicioImagenes
         Task<int> AgregarServicioImagen(M_ServicioImagenes servicioImagenes);
         Task<int> ModificarServicioImagenes(M_ServicioImagenes servicioImagenes);
         Task<M_ServicioImagenes> GetServicioImagenByName(string Descripcion);
+        Task<bool> EliminarServicioImagen(int IdServicioImagen);
     }
 }

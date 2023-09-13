@@ -1,8 +1,6 @@
 ﻿using LandingApi.AD.Models;
-using LandingAPI.AD.Models.Contactos;
-using LandingAPI.AD.Models.PortadaImagen;
+using LandingAPI.AD.Models.GaleriaImagenes;
 using LandingAPI.AD.Models.ServicioImagenes;
-using LandingAPI.AD.Models.Testimonios;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,13 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LandingAPI.AD.Services.ServicioImagenes
+namespace LandingAPI.AD.Services.GaleriaImagenes
 {
-    public class ServicioImagenServices : IServicioImagenServices
+    public class GaleriaImagenServices : IGaleriaImagenServices
     {
         private readonly string _connection;
 
-        public ServicioImagenServices(M_ConnectionToSql connection)
+        public GaleriaImagenServices(M_ConnectionToSql connection)
         {
             _connection = connection.GetConnection();
         }
@@ -27,142 +25,142 @@ namespace LandingAPI.AD.Services.ServicioImagenes
             return new SqlConnection(_connection);
         }
 
-        public async Task<List<M_ServicioImagenes>> GetServicioImagenes()
+        public async Task<List<M_GaleriaImagen>> GetGaleriaImagenes()
         {
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
 
-                using (var cmd = new SqlCommand("ServicioImagen_Obtener", conn))
+                using (var cmd = new SqlCommand("GaleriaImagen_Obtener", conn))
                 {
                     try
                     {
-                        var servicioImagenes = new List<M_ServicioImagenes>();
+                        var galeriaImagenes = new List<M_GaleriaImagen>();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
-                                var ServicioImagenes1 = new M_ServicioImagenes
+                                var GaleriaImagenes1 = new M_GaleriaImagen
                                 {
-                                    IdServicioImagen = reader.GetInt32(reader.GetOrdinal("IdServicioImagen")),
-                                    Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
+                                    IdGaleriaImagen = reader.GetInt32(reader.GetOrdinal("IdGaleriaImagen")),
+                                    IdGaleria = reader.GetInt32(reader.GetOrdinal("IdGaleria")),
                                     RutaImagen = reader.GetString(reader.GetOrdinal("RutaImagen")),
-                                    IdSeccionServicio = reader.GetInt32(reader.GetOrdinal("IdSeccionServicio"))
+                                    Descripcion = reader.GetString(reader.GetOrdinal("Descripcion"))
 
                                 };
 
-                                servicioImagenes.Add(ServicioImagenes1);
+                                galeriaImagenes.Add(GaleriaImagenes1);
                             }
                         }
 
-                        return servicioImagenes;
+                        return galeriaImagenes;
                     }
                     catch (Exception ex)
                     {
 
-                        throw new Exception("Se produjo un error al obtener los servicios/imagenes " + ex.Message);
+                        throw new Exception("Se produjo un error al obtener los galeria/imagenes " + ex.Message);
                     }
                 }
             }
         }
-        public async Task<M_ServicioImagenes> GetServicioImagenById(int IdServicioImagen)
+        public async Task<M_GaleriaImagen> GetGaleriaImagenById(int IdGaleriaImagen)
         {
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
 
-                using (var cmd = new SqlCommand("ServicioImagen_ObtenerPorId", conn))
+                using (var cmd = new SqlCommand("GaleriaImagen_ObtenerPorId", conn))
                 {
                     try
                     {
-                        M_ServicioImagenes? m_ServicioImagenes = null;
+                        M_GaleriaImagen? m_GaleriaImagen = null;
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@IdServicioImagen", SqlDbType.Int).Value = IdServicioImagen;
+                        cmd.Parameters.Add("@IdGaleriaImagen", SqlDbType.Int).Value = IdGaleriaImagen;
 
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
-                                m_ServicioImagenes = new M_ServicioImagenes
+                                m_GaleriaImagen = new M_GaleriaImagen
                                 {
-                                    IdServicioImagen = reader.GetInt32(reader.GetOrdinal("IdServicioImagen")),
-                                    Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
+                                    IdGaleriaImagen = reader.GetInt32(reader.GetOrdinal("IdGaleriaImagen")),
+                                    IdGaleria = reader.GetInt32(reader.GetOrdinal("IdGaleria")),
                                     RutaImagen = reader.GetString(reader.GetOrdinal("RutaImagen")),
-                                    IdSeccionServicio = reader.GetInt32(reader.GetOrdinal("IdSeccionServicio"))
+                                    Descripcion = reader.GetString(reader.GetOrdinal("Descripcion"))
 
                                 };
                             }
                         }
 
-                        return m_ServicioImagenes;
+                        return m_GaleriaImagen;
 
                     }
                     catch (Exception ex)
                     {
 
-                        throw new Exception("Se produjo un error al buscar Servicio/Imagen por id " + ex.Message);
+                        throw new Exception("Se produjo un error al buscar Galeria/Imagen por id " + ex.Message);
                     }
                 }
             }
         }
-        public async Task<M_ServicioImagenes> GetServicioImagenByName(string Descripcion)
+        public async Task<M_GaleriaImagen> GetGaleriaImagenByName(string Descripcion)
         {
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
 
-                using (var cmd = new SqlCommand("ServicioImagen_ObtenerPorNombre", conn))
+                using (var cmd = new SqlCommand("GaleriaImagen_ObtenerPorNombre", conn))
                 {
                     try
                     {
-                        M_ServicioImagenes? m_ServicioImagenes = null;
+                        M_GaleriaImagen? m_GaleriaImagen = null;
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@Descripcion", SqlDbType.VarChar, 50).Value = Descripcion;
+                        cmd.Parameters.Add("@Descripcion", SqlDbType.VarChar, 100).Value = Descripcion;
 
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
-                                m_ServicioImagenes = new M_ServicioImagenes
+                                m_GaleriaImagen = new M_GaleriaImagen
                                 {
-                                    IdServicioImagen = reader.GetInt32(reader.GetOrdinal("IdServicioImagen")),
-                                    Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
+                                    IdGaleriaImagen = reader.GetInt32(reader.GetOrdinal("IdGaleriaImagen")),
+                                    IdGaleria = reader.GetInt32(reader.GetOrdinal("IdGaleria")),
                                     RutaImagen = reader.GetString(reader.GetOrdinal("RutaImagen")),
-                                    IdSeccionServicio = reader.GetInt32(reader.GetOrdinal("IdSeccionServicio"))
-                                    
+                                    Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
+
                                 };
                             }
                         }
 
-                        return m_ServicioImagenes;
+                        return m_GaleriaImagen;
 
                     }
                     catch (Exception ex)
                     {
 
-                        throw new Exception("Se produjo un error al buscar contactos por nombre " + ex.Message);
+                        throw new Exception("Se produjo un error al buscar imagen por nombre en Galeria" + ex.Message);
                     }
                 }
             }
         }
-        public async Task<int> ModificarServicioImagenes(M_ServicioImagenes servicioImagenes)
+        public async Task<int> ModificarGaleriaImagen(M_GaleriaImagen galeriaImagen)
         {
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
 
-                using (var cmd = new SqlCommand("ServicioImagene_Modificar", conn))
+                using (var cmd = new SqlCommand("GaleriaImagen_Modificar", conn))
                 {
                     try
                     {
 
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@IdServicioImagen", SqlDbType.Int).Value = servicioImagenes.IdServicioImagen;
-                        cmd.Parameters.Add("@Descripcion", SqlDbType.VarChar, 100).Value = servicioImagenes.Descripcion;
-                        cmd.Parameters.Add("@RutaImagen", SqlDbType.VarChar, -1).Value = servicioImagenes.RutaImagen;
-                        cmd.Parameters.Add("@IdSeccionServicio", SqlDbType.Int).Value = servicioImagenes.IdSeccionServicio;
+                        cmd.Parameters.Add("@IdGaleriaImagen", SqlDbType.Int).Value = galeriaImagen.IdGaleriaImagen;
+                        cmd.Parameters.Add("@IdGaleria", SqlDbType.Int).Value = galeriaImagen.IdGaleria;
+                        cmd.Parameters.Add("@RutaImagen", SqlDbType.VarChar, -1).Value = galeriaImagen.RutaImagen;
+                        cmd.Parameters.Add("@Descripcion", SqlDbType.VarChar, 100).Value = galeriaImagen.Descripcion;
                         var rowAffected = await cmd.ExecuteScalarAsync();
 
                         if (rowAffected != null && rowAffected != DBNull.Value)
@@ -176,26 +174,26 @@ namespace LandingAPI.AD.Services.ServicioImagenes
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Se produjo un error al modificar el testimonio " + ex.Message);
+                        throw new Exception("Se produjo un error al modificar la Imagen " + ex.Message);
                     }
                 }
             }
         }
-        public async Task<int> AgregarServicioImagen(M_ServicioImagenes servicioImagenes)
+        public async Task<int> AgregarGaleriaImagen(M_GaleriaImagen galeriaImagen)
         {
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
 
-                using (var cmd = new SqlCommand("ServicioImagen_Agregar", conn))
+                using (var cmd = new SqlCommand("galeriaImagen_Agregar", conn))
                 {
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                       
-                        cmd.Parameters.Add("@Descripcion", SqlDbType.VarChar, 100).Value = servicioImagenes.Descripcion;
-                        cmd.Parameters.Add("@RutaImagen", SqlDbType.VarChar, -1).Value = servicioImagenes.RutaImagen;
-                        cmd.Parameters.Add("@IdSeccionServicio", SqlDbType.Int).Value = servicioImagenes.IdSeccionServicio;
+
+                        cmd.Parameters.Add("@IdGaleria", SqlDbType.Int).Value = galeriaImagen.IdGaleria;
+                        cmd.Parameters.Add("@RutaImagen", SqlDbType.VarChar, -1).Value = galeriaImagen.RutaImagen;
+                        cmd.Parameters.Add("@Descripcion", SqlDbType.VarChar, 100).Value = galeriaImagen.Descripcion;
 
 
                         var id = await cmd.ExecuteScalarAsync();
@@ -211,24 +209,24 @@ namespace LandingAPI.AD.Services.ServicioImagenes
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Se produjo un error al agregar una Imagen a servicios " + ex.Message);
+                        throw new Exception("Se produjo un error al agregar una Imagen a Galeria " + ex.Message);
                     }
                 }
             }
         }
 
-        public async Task<bool> EliminarServicioImagen(int IdServicioImagen)
+        public async Task<bool> EliminarGaleriaImagen(int IdGaleriaImagen)
         {
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
 
-                using (var cmd = new SqlCommand("ServicioImagen_Eliminar", conn))
+                using (var cmd = new SqlCommand("galeriaImagen_Eliminar", conn))
                 {
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@IdServicioImagen", SqlDbType.Int).Value = IdServicioImagen;
+                        cmd.Parameters.Add("@IdGaleriaImagen", SqlDbType.Int).Value = IdGaleriaImagen;
 
                         var rowsAffected = await cmd.ExecuteNonQueryAsync();
 
@@ -241,5 +239,6 @@ namespace LandingAPI.AD.Services.ServicioImagenes
                 }
             }
         }
+
     }
 }

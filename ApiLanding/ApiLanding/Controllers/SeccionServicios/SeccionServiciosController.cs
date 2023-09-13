@@ -83,5 +83,35 @@ namespace ApiLanding.Controllers.SeccionServicios
                 throw new Exception("Controller: Se produjo un error al agregar/modificar la seccion servicio " + ex.Message);
             }
         }
+
+        [HttpPost, Route("Save-PDF-SeccionServicios")]
+        public async Task<ActionResult> SaveSeccionServicioFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest();
+            }
+
+            string fileName = file.FileName;
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            string extension = Path.GetExtension(fileName);
+            string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".pdf" }; // Agregamos ".pdf" a las extensiones permitidas
+
+            if (!allowedExtensions.Contains(extension.ToLower()))
+            {
+                return BadRequest();
+            }
+
+            string fileNameNew = $"{Guid.NewGuid()}-{fileNameWithoutExtension}{extension}";
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot", "Archivos", fileNameNew); // Cambiamos la ruta para reflejar el cambio a "Files"
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            return Ok($"Archivos{fileNameNew}"); // Cambiamos la ruta de retorno para reflejar el cambio a "Files"
+        }
+
     }
 }
